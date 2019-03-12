@@ -7,10 +7,16 @@ app.set('port', process.env.PORT || 3000);
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json())
 
+
+
 require('./database.js');
 
 // routes
 app.use('/api', require('./routes/user-route'));
+
+app.use(function(req, res) {
+  res.status(404).send({url: req.originalUrl + ' not found'});
+});
 
 app.listen(app.get('port'),function(req,res){
 	console.log('Welcome listening on the port ' + app.get('port'))

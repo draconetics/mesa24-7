@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -7,7 +6,7 @@ const userSchema = new Schema({
   lastname: {type:String, default:""},
   password: {type:String, default:""},
   email: {type:String, default:""},
-  hospitales:{type:Array, default:[]}
+  hospitals:{type:Array, default:[]}
 });
 
 
