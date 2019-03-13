@@ -20,7 +20,7 @@ router.post('/',(req,res) => {
 	let userModel = new User();
 	
 	userModel.name = newUser.name;
-	userModel.lastName = newUser.lastName;
+	userModel.lastname = newUser.lastname;
 	userModel.email = newUser.email;
 	userModel.password = newUser.password;
 
@@ -34,7 +34,7 @@ router.post('/',(req,res) => {
 			});
 		res.status(200).json({
 			response: "User successfully saved.",
-			id: newUser._id
+			user: newUser
 		});
 	});
 });
