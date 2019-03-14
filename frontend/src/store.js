@@ -18,11 +18,10 @@ export default new Vuex.Store({
 			//console.log(state.users);
 		},
 		UPDATE_USER(state, user) {
-			state.users.map((item)=>{
-				if(item._id === user._id)
-					item = {...user}
-			});
-			//console.log(state.users);
+			const index = state.users.findIndex(item => item._id === user._id);
+			//console.log(state.users[index]);
+			state.users[index] = {...user};
+			//console.log(state.users[index]);
 		},
 		DELETE_USER(state, id) {
 			state.users = state.users.filter((item)=>{
