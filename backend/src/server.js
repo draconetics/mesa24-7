@@ -1,15 +1,29 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const passport = require('passport');
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 3050);
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json())
 
 
 
-require('./database.js');
+require('./database');
+require('./passport/local-auth');
+
+app.use(session({
+  secret: 'mysecretsession',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 //CORS middleware
 app.use( function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -19,7 +33,10 @@ app.use( function(req, res, next) {
 });
 
 // routes
+app.use('/api/login', require('./routes/user-logging'));
 app.use('/api', require('./routes/user-route'));
+app.use('/api/user', require('./routes/user-profile'));
+
 
 app.use(function(req, res) {
   res.status(404).send({url: req.originalUrl + ' not found'});
