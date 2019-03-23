@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const passport = require('passport');
 
-app.set('port', process.env.PORT || 3050);
+app.set('port', process.env.PORT || 3000);
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json())
@@ -26,16 +26,16 @@ app.use(passport.session());
 
 //CORS middleware
 app.use( function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     next();
 });
 
 // routes
 app.use('/api/login', require('./routes/user-logging'));
-app.use('/api', require('./routes/user-route'));
-app.use('/api/user', require('./routes/user-profile'));
+app.use('/api/user', require('./routes/user-route'));
+app.use('/api/user/profile', require('./routes/user-profile'));
 
 
 app.use(function(req, res) {

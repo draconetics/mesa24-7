@@ -19,8 +19,9 @@ export default new Vuex.Store({
 		},
 		UPDATE_USER(state, user) {
 			const index = state.users.findIndex(item => item._id === user._id);
+			//console.log(index);
 			//console.log(state.users[index]);
-			state.users[index] = {...user};
+			Vue.set(state.users, index, user);
 			//console.log(state.users[index]);
 		},
 		DELETE_USER(state, id) {
@@ -35,11 +36,11 @@ export default new Vuex.Store({
   },
   actions: {
   		async getUsers ({commit}) {
-			let response = await axios.get(this.state.apiUrl)
+			let response = await axios.get(this.state.apiUrl + 'user')
 								  .then(function (response) {
 								    // handle success
 
-								    //console.log(response.data);
+								    console.log(response.data);
 								    commit('FILL_USERS', response.data);
 								  })
 								  .catch(function (error) {
@@ -51,7 +52,7 @@ export default new Vuex.Store({
 		},
 		addUser({commit},user) {
 			console.log(user);
-			let response = axios.post(this.state.apiUrl,{
+			let response = axios.post(this.state.apiUrl + 'user',{
 								    name: user.name,
 								    lastname: user.lastname,
 								    email: user.email,
@@ -71,7 +72,7 @@ export default new Vuex.Store({
 		},
 		updateUser({commit},user) {
 			console.log(user);
-			let response = axios.put(this.state.apiUrl + user._id,{
+			let response = axios.put(this.state.apiUrl + 'user/' + user._id,{
 								    name: user.name,
 								    lastname: user.lastname,
 								    email: user.email,
@@ -91,7 +92,7 @@ export default new Vuex.Store({
 		},
 		deleteUser({commit},id) {
 			console.log(id);
-			let response = axios.delete(this.state.apiUrl + id)
+			let response = axios.delete(this.state.apiUrl + 'user/' + id)
 								  .then(function (response) {
 								    // handle success
 
