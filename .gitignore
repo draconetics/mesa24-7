@@ -1,2 +1,4 @@
 backend/node_modules
+cookies/node_modules
+cookies/frontend/sessions-project/node_modules
 .gitignore
