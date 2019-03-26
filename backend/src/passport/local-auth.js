@@ -5,7 +5,8 @@ const User = require('../models/user');
 
 //setting cookie on user's browser.
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+ // if(user)
+    done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
@@ -34,18 +35,27 @@ passport.use('local-signup', new LocalStrategy({
 }));
 
 passport.use('local-signin', new LocalStrategy({
-  usernameField: 'email',//email
-  passwordField: 'password',
-  passReqToCallback: true
+    usernameField: 'email',//email
+    passwordField: 'password',
+    passReqToCallback: true
 }, async (req, email, password, done) => {
-  console.log('local-signin');
-  const user = await User.findOne({email: email});
-  if(!user) {
-    console.log('email dont exist');
-    return done(null, false);
-  }
+    console.log('local-signin');
+    const user = await User.findOne({email: email});
+    //console.log(user);
+    if(user == null) {
+        console.log('email dont exist');
+        return done(null, false, {info: "user doesnt exist!",user:false});
+    }
+    if(user.password != password){
+        console.log('password incorrect');
+        return done(null, false, {info:"password incorrect",user:false});
+    }
 
-  return done(null, user);
+    //console.log("database ----------------------------");
+    //console.log(user);
+
+    //error on sighin then user is false.
+    return done(null, user);
 }));
 
 
