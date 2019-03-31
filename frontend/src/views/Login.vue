@@ -1,7 +1,8 @@
 <template>
 	<b-container >
-		<b-row class="justify-content-xs-center">
-			<b-form @submit="onSubmit" @reset="onReset" col-xs-6>
+		<b-row class="justify-content-xs-center p-5 mx-5">
+			<b-col class="card-login p-5 ">
+			<b-form @submit="onSubmit" @reset="onReset" >
 				{{userLogged}}
 				
 				<Alert  v-if="(error != null)" :message="error"/>
@@ -29,23 +30,29 @@
 					v-model="form.password"
 					required/>
 				</b-form-group>
-
+				<b-row align-h="around">
 				<b-button type="submit" variant="primary">Login</b-button>
-				<b-button type="reset" variant="danger">Reset</b-button>
+				<b-button type="reset" variant="danger" @click.prevent="$router.push('/')">Cancel</b-button>
+				</b-row>
 			</b-form>
-			</b-row>
+			</b-col>
+			<b-col class="card-login p-5 ">
+				<FormSocialNetwork/>
+			</b-col>
+		</b-row>
 	</b-container>
 </template>
 
 <script>
 
+import FormSocialNetwork from '@/components/FormSocialNetworkComponent.vue'
 import Alert from '@/components/AlertComponent.vue';
 import { mapActions, mapState } from 'vuex'
 
 export default {
 	name:'Login',
 	components: {
-		Alert
+		Alert, FormSocialNetwork
 	},
 	data() {
 		return {
@@ -81,3 +88,10 @@ export default {
 
 }
 </script>
+
+<style>
+	.card-login {
+		border: 1px solid rgba(0,0,0,0.1);
+		border-radius: 2px;
+	}
+</style>

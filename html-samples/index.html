@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+span.a {
+  display: inline; /* the default for span */
+
+  padding: 1px;
+  border: 1px solid blue;  
+  background-color: yellow; 
+}
+
+span.b {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  padding: 5px;
+  border: 1px solid blue;    
+  background-color: yellow; 
+}
+
+span.c {
+  display: block;
+  width: 100px;
+  height: 100px;
+  padding: 5px;
+  border: 1px solid blue;    
+  background-color: yellow; 
+}
+
+.menu {
+	height: 200px;
+	display: flex;
+	align-items: stretch;
+	background-color: gray;
+}
+
+.image {
+	width: 100px;
+	height: 100px;
+	background-color: white;
+	flex-grow: 2;
+	margin-top: 50px;
+}
+.searcher {
+	//display: inline-block;
+	
+  	//line-height: 75px;
+	padding: 10px;
+	background-color: brown;
+	flex-grow: 8;
+	position: relative;
+	text-align: center;
+}
+
+.form {
+	background-color: green;
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	-ms-transform: translateX(-50%);
+	transform: translateX(-50%);
+}
+</style>
+</head>
+<body>
+
+<h1>The display Property</h1>
+
+<h2>display: inline</h2>
+<div style="display:flex;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum consequat scelerisque elit sit amet consequat. Aliquam erat volutpat. <span class="a">Aliquam</span> <span class="a">venenatis</span> gravida nisl sit amet facilisis. Nullam cursus fermentum velit sed laoreet. </div>
+
+<h2>display: inline-block</h2>
+<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum consequat scelerisque elit sit amet consequat. Aliquam erat volutpat. <span class="b">Aliquam</span> <span class="b">venenatis</span> gravida nisl sit amet facilisis. Nullam cursus fermentum velit sed laoreet. </div>
+
+<h2>display: block</h2>
+<div>Lorem ipsum dolor sit am
+
+<div class="menu">
+	<div class="image">this is an image</div>
+	<div class="searcher">
+		<form action="" class="form">
+			<input type="text"/>
+			<button>Search</button>
+		</form>
+	</div>
+</div>

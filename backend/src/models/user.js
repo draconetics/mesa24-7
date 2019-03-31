@@ -10,6 +10,8 @@ const userSchema = new Schema({
   hospitals:{type:Array, default:[]}
 });
 
+//userSchema.index({name: 'name_text', 'name': 'text'});
+
 userSchema.methods.encryptPassword = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));//returned encripted password.
 };

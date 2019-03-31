@@ -15,6 +15,7 @@ router.get('/',(req,res,next) => {
 	res.json({login:'loggin insterface.'});
 });
 
+/*
 router.post('/',(req,res,next) => {
 	console.log("/login (post)");
 	//res.json({login:'loggin insterface.'});
@@ -27,7 +28,7 @@ router.post('/',(req,res,next) => {
 			if(user.length < 1){
 				return res.status(401).json({
 					user:false,
-					info:"email does not exist"
+					info:"Email does not exist"
 				});
 			}
 			//console.log((typeof user[0].password) + ' ' + (typeof password));
@@ -41,9 +42,9 @@ router.post('/',(req,res,next) => {
 		});
 	
 });
+*/
 
-/*
-router.post('/',(req,res,next) => {
+router.post('/login',(req,res,next) => {
 		console.log("/login (post)");
 		//res.json({login:'loggin insterface.'});
 		let {email, password} = req.body;
@@ -56,16 +57,19 @@ router.post('/',(req,res,next) => {
 				res.status(200).json(info);	
 			}
 			req.logIn(user, function(err) {
-		      if (err) { return next(err); }
-		      	//console.log(req);
-		      	const userJson = user.toJSON()
-		      	return res.json({info:'ok', user:req.user, token:jwtSignUser(userJson)});
+				if (err) { 
+					return next(err); 
+				} else {
+					const userJson = user.toJSON();
+					return res.json({info:'ok', user:req.user, token:jwtSignUser(userJson)});	
+				}
+				
 		    });
 		})(req, res, next);
 
 		}
 );
-*/
+
 /*
 router.post('/',passport.authenticate('local-signin'),(req,res)=>{
 
@@ -77,10 +81,16 @@ router.post('/',passport.authenticate('local-signin'),(req,res)=>{
 router.post('/logout', (req, res) => {
 	console.log('logout');
     if (req.user) {
-        req.logout();
-        res.send({ msg: 'logging out' });
+    	try{
+    		req.logout();
+    		//DON PERFORMING CORRECTLY DELETE COOKIES
+    		res.clearCookie('passport-session', { path: '/' });
+    	}catch(err){
+    		console.log(err);
+    	}
+        res.send({ info: 'logged out', user:false });
     } else {
-        res.send({ msg: 'no user to log out' });
+        res.send({ user:req.user, info: 'You are not registed a session.' });
     }
 });
 
@@ -99,15 +109,22 @@ router.get('/tmp',ensureToken,(req,res)=>{
 
 router.post('/signup',
 	(req,res,next)=>{
-	
-	 passport.authenticate('local-signup', function(err, user, info) {
-		    if (err) { return next(err); }
-		    if (!user) { 
-		        res.status(401).json({message:info, error: "Error creating new user"});
-		        return;
-		    }
-	    createSendToken(req.user, res);
-	  })(req, res, next);
+		console.log("signup method");
+
+		passport.authenticate('local-signup', function(err, user, info) {
+			if (err) { 
+				console.log("error on passwordjs, method local-signup");
+				return next(err); 
+			}
+			if (!user) 
+				return res.status(200).json(info);
+
+			req.logIn(user, function(err) {
+		      		if (err) return next(err); 
+		      		else return res.status(200).json(info);
+	    		});
+		
+		})(req, res, next);
 }); 
 
 

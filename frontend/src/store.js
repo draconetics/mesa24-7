@@ -66,7 +66,8 @@ export default new Vuex.Store({
 		},
 		addUser({commit},user) {
 			console.log(user);
-			let response = axios.post(this.state.apiUrl + 'user',{
+			//let response = axios.post(this.state.apiUrl + 'user',{
+			let response = axios.post(this.state.apiUrl + 'user/new',{
 								    name: user.name,
 								    lastname: user.lastname,
 								    email: user.email,
@@ -74,7 +75,6 @@ export default new Vuex.Store({
 								  })
 								  .then(function (response) {
 								    // handle success
-
 								    console.log(response.data);
 								    commit('ADD_USER', response.data.user);
 								  })
@@ -83,6 +83,40 @@ export default new Vuex.Store({
 								    console.log(error);
 								    throw error;
 								  });
+		},
+		addUserAndLogin({commit},user) {
+			console.log('add user and log in');
+			console.log(user);
+			//let response = axios.post(this.state.apiUrl + 'user',{
+			let response = axios.post(this.state.apiUrl + 'signup',{
+				name: user.name,
+				lastname: user.lastname,
+				email: user.email,
+				password: user.password
+			},
+			{withCredentials:true})
+			.then(function (response) {
+				console.log(response.data);
+				console.log(response.data.info);
+			// handle success
+				if(response.data.user == false)
+					commit('SET_ERROR', response.data.info);
+				else{
+					//console.log(data.info);
+					commit('SET_USER_LOGGED', response.data.user);
+
+					const parsedUser = JSON.stringify(response.data.user);
+					//const parseToken = JSON.stringify(data.token);
+					localStorage.setItem('user', parsedUser);
+					//localStorage.setItem('token', data.token+"");
+					router.push('/');
+				}
+			})
+			.catch(function (error) {
+				// handle error
+				console.log(error);
+				throw error;
+			});
 		},
 		updateUser({commit},user) {
 			console.log(user);
@@ -121,7 +155,7 @@ export default new Vuex.Store({
 		},
 		loginUser ({commit}, payload) {
 			console.log('login');
-			let tmp = axios.post(this.state.apiUrl + 'login', payload)
+			let tmp = axios.post(this.state.apiUrl + 'login', payload , {withCredentials: true})
 				.then(function (response) {
 					// handle success
 					console.log('user encountered');
@@ -137,8 +171,30 @@ export default new Vuex.Store({
 						const parseToken = JSON.stringify(data.token);
       					localStorage.setItem('user', parsedUser);
       					localStorage.setItem('token', data.token+"");
-						router.push('user/profile');
+						router.push('/');
 					}
+				}).catch(function (error) {
+					// handle error
+					console.log(error);
+					//console.log(error.data);
+					throw error;
+				});
+			console.log('finish login');
+		},
+		loginOut ({commit}) {
+			console.log('login');
+			let tmp = axios.post(this.state.apiUrl + 'logout', {}, {withCredentials: true})
+				.then(function (response) {
+					// handle success
+					console.log('loginout method store');
+					let data = response.data;
+					console.log(data);
+					commit('SET_ERROR', data.info);
+					commit('SET_USER_LOGGED', null);
+					localStorage.removeItem('user');
+					localStorage.removeItem('token');
+					document.cookie = 'passport-session' +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+					router.push('/');
 				}).catch(function (error) {
 					// handle error
 					console.log(error);
@@ -156,6 +212,7 @@ export default new Vuex.Store({
 		changeProfile({commit}) {
 			console.log('this is the token');
 			console.log(this.state.token);
+
 			axios({
 				method: 'get', 
 				url: this.state.apiUrl + 'login/profile',
