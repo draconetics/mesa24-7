@@ -8,7 +8,7 @@ const userSchema = new Schema({
   password: {type:String, default:""},
   email: {type:String, default:""},
   hospitals:{type:Array, default:[]}
-});
+}, { strict: false });
 
 //userSchema.index({name: 'name_text', 'name': 'text'});
 

@@ -32,9 +32,10 @@
 			<b-row>
 				<b-col>
 					<b-img v-bind="imageProps"></b-img>
-					<input type="file" @change="onFileChange"/>
+					<input type="file" id="file" ref="file" accept="image/*" v-on:change="handleFileUpload()"/>
+
 					<b-col class="btn-group-save-image">
-						<b-btn class="m-2">Save</b-btn>
+						<b-btn class="m-2" @click="saveImage">Save</b-btn>
 						<b-btn class="m-2">Cancel</b-btn>
 					</b-col>
 					{{file }}
@@ -58,6 +59,7 @@
 
 import { mapState, mapActions } from 'vuex';
 import Vue from 'vue';
+import axios from 'axios';
 
 Vue.filter('json', function (value) {
     return JSON.stringify(value);
@@ -72,23 +74,82 @@ export default {
 			width: 75, 
 			height: 75, 
 		},
-		file: null
+		file: null,
+		showPreview: null,
+		imagePreview: null,
+		oldImageId: 0,
 	}),
 	methods: {
 		...mapActions([
 			'changeProfile'
 		]),
-		onFileChange(e) {
-			console.log(this.imageProps);
-			let input = e.target;
-			if (input.files && input.files[0]) {
-				var reader = new FileReader();
-				reader.onload = (e)=>{
-					this.imageProps.src = e.target.result;
-				}
+	handleFileUpload(){
+		/*
+		Set the local file variable to what the user has selected.
+		*/
+		this.file = this.$refs.file.files[0];
 
-				reader.readAsDataURL(input.files[0]);
+		/*
+		Initialize a File Reader object
+		*/
+		let reader  = new FileReader();
+
+		/*
+		Add an event listener to the reader that when the file
+		has been loaded, we flag the show preview as true and set the
+		image to be what was read from the reader.
+		*/
+		reader.addEventListener("load", function () {
+			this.showPreview = true;
+			this.imagePreview = reader.result;
+		}.bind(this), false);
+
+		/*
+		Check to see if the file is not empty.
+		*/
+		if( this.file ){
+		/*
+		Ensure the file is an image file.
+		*/
+			if ( /\.(jpe?g|png|gif)$/i.test( this.file.name ) ) {
+			/*
+			Fire the readAsDataURL method which will read the file in and
+			upon completion fire a 'load' event which we will listen to and
+			display the image in the preview.
+			*/
+				reader.readAsDataURL( this.file );
 			}
+		}
+	},
+		saveImage() {
+			/*
+			Initialize the form data
+			*/
+			console.log('save image');
+			let formData = new FormData();
+
+			/*
+			Add the form data we need to submit
+			*/
+			formData.append('file', this.file);
+
+			/*
+			Make the request to the POST /single-file URL
+			*/
+			axios.post( 'http://localhost:3000/api/user/profile/upload',
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+						'x-data-image': 0,
+						'x-data-user': this.userLogged._id,
+					}
+				}).then(function(data){
+					console.log('SUCCESS!!');
+					console.log(data);
+				}).catch(function(){
+					console.log('FAILURE!!');
+				});
 		}
 	},
 	computed: {
@@ -97,7 +158,9 @@ export default {
         ])
 	},
 	mounted() {
-		console.log(this.userLogged);
+		//console.log(this.userLogged);
+		if (this.userLogged.image)
+			this.oldImageId = this.userLogged.image.metadata._id;
 	},
 	watch: {
 		file: function (val) {
